@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: new-api
+    env: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    region: singapore  # 新加坡节点，国内访问延迟较低
+    healthCheckPath: /
+    envVars:
+      - key: SESSION_SECRET
+        generateValue: true          # Render 自动生成随机密钥，无需手填
+      - key: SQL_DSN
+        value: ""                    # 留空 = 使用内置 SQLite（免费部署首选）
+      - key: INITIAL_ROOT_TOKEN
+        sync: false                  # 在 Render Dashboard 手动填写，不提交到 Git
+      - key: TZ
+        value: Asia/Shanghai
+      - key: TIKTOKEN_CACHE_DIR
+        value: /tmp/tiktoken_cache
+    disk:
+      name: new-api-data
+      mountPath: /data               # SQLite 数据库持久化路径
+      sizeGB: 1                      # 免费层最大 1GB
